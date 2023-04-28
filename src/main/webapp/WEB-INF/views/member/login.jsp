@@ -39,6 +39,11 @@
                                 <!-- To make this form functional, sign up at-->
                                 <!-- https://startbootstrap.com/solution/contact-forms-->
                                 <!-- to get an API token!-->
+                                
+                                
+                                <c:if test="${not empty param.errorMessage }">
+                                	<h1>${param.errorMessage}</h1>
+                                </c:if>
                                 <form id="contactForm" action="./login" method="post" data-sb-form-api-token="API_TOKEN">
                                     <!-- USERName input-->
                                     <div class="form-floating mb-3">
@@ -94,6 +99,9 @@
                 </div>
             </section>
 	
+	<script type="text/javascript">
+	history.replaceState({}, null, location.pathname)
+	</script>
 	</main>
 	<!-- Footer 적용  -->
 	<c:import url="../temp/footer.jsp"></c:import>
