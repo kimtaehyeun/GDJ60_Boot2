@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.iu.base.member.MemberDAO">
+
+	<select id="getBirth" resultType="MemberVO">
+		SELECT NAME, EMAIL FROM MEMBER
+		WHERE DATE_FORMAT(birth, '%M-%D')=DATE_FORMAT(now(), '%M-%D')
+	</select>
+
+	<update id="setEnabled">
+	UPDATE MEMBER SET ENABLED = 0
+	WHERE username 
+	IN 
+		( SELECT username FROM MEMBER 
+		  WHERE TIMESTAMPDIFF(DAY, lastTime, now()) >= 3)
+<!--	
+	<![CDATA[  
+ 		UPDATE MEMBER SET ENABLED=0
+		WHERE LASTTIME <= now()-INTERVAL 3 DAY
+	]]>
+ -->	
+	</update>
+
+	<update id="setLastTimeUpdate" parameterType="MemberVO">
+		UPDATE MEMBER SET LASTTIME=now() WHERE username=#{username}
+	</update>
+
+	<select id="getMembers" resultType="MemberVO">
+		SELECT username FROM MEMBER 
+	</select>
+	
+	<insert id="setJoin" parameterType="MemberVO">
+		INSERT INTO MEMBER (USERNAME,PASSWORD, NAME, EMAIL, BIRTH, ENABLED)
+		VALUES(#{username}, #{password}, #{name}, #{email}, #{birth}, 1)
+	</insert>
+	
+	<insert id="setMemberRole" parameterType="Map">
+		INSERT INTO MEMBER_ROLE (username, NUM)
+		VALUES(#{username}, #{num})
+	</insert>
+	
+	<select id="idDuplicateCheck" resultType="MemberVO" parameterType="MemberVO">
+		SELECT username FROM MEMBER WHERE username=#{username}
+	</select>
+	
+	<select id="getLogin" parameterType="MemberVO" resultMap="getLoginResult">
+		SELECT M.username,M.password, M.email, R.num, R.ROLENAME 
+		FROM MEMBER M
+			 INNER JOIN
+			 MEMBER_ROLE MR
+			 ON M.username = MR.username
+			 INNER JOIN
+			 ROLE R
+			 ON MR.NUM = R.NUM
+		WHERE M.username=#{username} 
+	</select>
+	
+	<resultMap type="MemberVO" id="getLoginResult">
+		<id property="username" column="USERNAME"/>
+		<result property="password" column="PASSWORD"/>
+		<result property="email" column="EMAIL"/>
+		<collection property="roleVOs" javaType="List" ofType="RoleVO">
+			<id property="num" column="NUM"/>
+			<result property="roleName" column="ROLENAME"/>
+		</collection>
+	
+	</resultMap>
+	
+	
+	
+	
+
+
+</mapper>  
