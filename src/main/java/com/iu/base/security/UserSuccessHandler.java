@@ -20,7 +20,7 @@ public class UserSuccessHandler implements AuthenticationSuccessHandler{
 			Authentication authentication) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		log.error("========== Login 성공 후 실행 ============== ");
-		log.error("======== {} ====== ", authentication.);
+		log.error("======== {} ====== ", authentication);
 		//foward
 		//RequestDispatcher view = request.getRequestDispatcher("/WEB-INF/");
 		//view.forward(request, response);
