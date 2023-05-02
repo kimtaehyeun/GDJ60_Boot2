@@ -49,6 +49,9 @@
                         		
                         		<spring:message code="loginSuccess" text="없는 message" arguments="${member.userName},${member.name}" argumentSeparator="," ></spring:message>
                         		<sec:authorize access="isAuthenticated()">로그인 성공</sec:authorize>
+                        		<sec:authorize access="isAuthenticated()">
+	<sec:authentication property="name"/>
+</sec:authorize>
                         		<sec:authorize access="!isAuthenticated()">로그인 전</sec:authorize>
                         		
                         	</h1>

@@ -40,6 +40,12 @@
 		    
 		</dependency>
 
+		<!-- Social Login -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-oauth2-client</artifactId>
+			</dependency>
+
 		
 		<!-- 검증 -->
 		<dependency>

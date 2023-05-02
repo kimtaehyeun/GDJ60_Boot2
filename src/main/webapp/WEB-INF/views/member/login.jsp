@@ -67,9 +67,11 @@
                                    
                                     <!-- Submit Button-->
                                     <div class="d-grid"><button class="btn btn-primary btn-lg" id="submitButton" type="submit">Submit</button></div>
+                               	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                                 </form>
                                 
                                 <a href="./findPassword">비밀번호 찾기</a>
+                                <a href="/oauth2/authorization/kakao">kakao Login</a>
                             </div>
                         </div>
                     </div>

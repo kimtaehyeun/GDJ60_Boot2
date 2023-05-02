@@ -1,5 +1,6 @@
 package com.iu.base.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,13 +10,25 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.iu.base.member.MemberService;
+import com.iu.base.member.MemberSocialService;
 import com.iu.base.security.UserLoginFailHandler;
+import com.iu.base.security.UserLogoutHandler;
 import com.iu.base.security.UserLogoutSuccessHandler;
 import com.iu.base.security.UserSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+	
+	@Autowired
+	private MemberSocialService memberSocialService;
+	@Autowired
+	private UserLogoutHandler userLogoutHandler;
+	@Autowired
+	private UserLogoutSuccessHandler userLogoutSuccessHandler;
+	
+	
 	
 	@Bean
 	//public 을 선언하면 default로 바꾸라는 메세지 출력
@@ -35,14 +48,16 @@ public class SecurityConfig {
 	SecurityFilterChain fiterChain(HttpSecurity httpSecurity)throws Exception{
 		httpSecurity
 				.cors()
+//				.disable()
 				.and()
 				.csrf()
 				.disable()
+			
 			.authorizeRequests()
 				//URL과 권한 매칭
 				.antMatchers("/").permitAll()
 				.antMatchers("/member/join").permitAll()
-				.antMatchers("/notice/add").hasRole("ADMIN")
+				.antMatchers("/notice/add").hasRole("MEMBER")
 				.antMatchers("/notice/update").hasRole("ADMIN")
 				.antMatchers("/notice/delete").hasRole("ADMIN")
 				.antMatchers("/notice/*").permitAll()
@@ -54,20 +69,29 @@ public class SecurityConfig {
 			.formLogin()
 				.loginPage("/member/login")
 				.defaultSuccessUrl("/")
-//				.successHandler(new UserSuccessHandler())
+				.successHandler(new UserSuccessHandler())
 //				.failureUrl("/member/login")
 				.failureHandler(new UserLoginFailHandler())
 				.permitAll()
 				.and()
 			.logout()
 				.logoutUrl("/member/logout")
+//				.addLogoutHandler(userLogoutHandler)
 //				.logoutSuccessUrl("/")
-				.logoutSuccessHandler(new UserLogoutSuccessHandler())
+				.logoutSuccessHandler(userLogoutSuccessHandler)
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 				.permitAll()
+				.and()
+				.oauth2Login()
+				.userInfoEndpoint()
+				.userService(memberSocialService)
 				
+//				.sessionManagement()
+//				.maximumSessions(1)//최대 허용 가능한 세션의 수, -1: 무제한
+//				.maxSessionsPreventsLogin(false)//false:이전 사용자 세션 만료, true: 새로운 사용자 인증 실패
 				;
+		
 		
 		return httpSecurity.build();
 	}
